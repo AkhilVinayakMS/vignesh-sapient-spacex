@@ -1,0 +1,23 @@
+.CustomCard {
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  padding: 15px;
+}
+
+.CustomCardImage {
+  height: 200px;
+  width: 100%;
+}
+
+.CustomCardName {
+  margin: 10px 0px;
+  color: black;
+  font-weight: bold;
+}
+
+.CustomCardDesc {
+  margin: 10px 0px;
+
+  font-weight: bold;
+}

@@ -14,3 +14,20 @@ a {
 * {
   box-sizing: border-box;
 }
+
+h5 {
+  text-align: center;
+}
+
+h3 {
+  padding: 10px;
+}
+
+h2 {
+  text-align: center;
+  margin: 15px;
+}
+
+span {
+  color: indigo;
+}

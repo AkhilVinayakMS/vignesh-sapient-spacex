@@ -1,0 +1,18 @@
+.custombtn {
+  padding: 15px;
+  width: 40%;
+  background-color: #7aba00;
+  margin: 10px;
+  text-align: center;
+  border: 0;
+}
+
+.custombtnactive {
+  background-color: green;
+  padding: 15px;
+  width: 40%;
+
+  margin: 10px;
+  text-align: center;
+  border: 0;
+}

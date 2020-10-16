@@ -1,65 +1,97 @@
-import Head from 'next/head'
+
 import styles from '../styles/Home.module.css'
+import React,{ useEffect, useState} from 'react';
+import { Container, Row, Col } from 'reactstrap';
+import axios from 'axios';
+import { useRouter } from 'next/router'
+import Filter from '../components/Filter/filter';
+import Card from '../components/Card/card';
 
-export default function Home() {
+function Home(props) {
+  const { launches } = props;
+  const router = useRouter();
+  let { land_success, launch_success, launch_year } = router.query;
+ console.log('----',router.query)
+  const [filter, setFilter] = useState({year:launch_year? launch_year:'',launch:launch_success?launch_success:'',landing:land_success?land_success:''});
+  const [flights, setFlights] = useState(launches);
+ 
+useEffect(() => {
+     
+    const yearFilter = launch_year ? `&launch_year=${launch_year}` : ""
+    const launchFilter = launch_success ? `&launch_success=${launch_success}` : ""
+    const landingFilter = land_success ? `&land_success=${land_success}` : ""
+    axios.get(`https://api.spacexdata.com/v3/launches?limit=100${yearFilter}${launchFilter}${landingFilter}`)
+      .then(res => {
+        setFlights(res.data)
+      })
+  }, [land_success,launch_success,launch_year]);
+
+
+  
+  const updateFilterState = (key, value) => {
+    console.log(key, value)
+    
+    setFilter(prevState => ({
+      ...prevState,
+      [key]: value
+    }));
+    launch_year = (key === 'year' && value) ? value : launch_year;
+    land_success = (key === 'landing' && value) ? value : land_success;
+    launch_success = (key === 'launch' && value) ? value : launch_success;
+    
+    router.push(`/?launch_success=${launch_success ? launch_success:""}&land_success=${land_success?land_success:""}&launch_year=${launch_year?launch_year:""}`, undefined, { shallow: true });
+  
+  }
+
+  console.log('-##############-',filter)
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+    <Container fluid={true} className={styles.App}>
+      <Row xl="12">
+        <Col><h2>Space X Launch Program</h2></Col>
+      </Row>
+      <Row  xs="12">
+        <Col xs="12" sm="3"><Filter
+          updateFilter={(key, value) => updateFilterState(key, value)}
+          yearProp={filter.year}
+          launchProp={filter.launch}
+          landingProp={filter.landing} /></Col>
+        <Col xs="12" sm="9">
+        <Row  xs="12">
+            {flights && flights.length > 0 && flights.map(f => <Col md="4" sm="6" xs="12" className={styles.padtop}>
+              <Card
+                missionName={f.mission_name}
+                flightNumber={f.flight_number}
+                imageURL={f.links.mission_patch_small}
+                missionIds={f.mission_id}
+                launchYear={f.launch_year}
+                launchSuccess={f.launch_success === null ? '' : f.launch_success.toString()}
+                launchLanding={f.rocket.first_stage.cores[0].land_success === null? '': f.rocket.first_stage.cores[0].land_success.toString()}
+              />
+              
+            </Col>)}
+            
+          </Row>
+        </Col>
+        
+        
+      </Row>
+      <Row xl="12">
+        <Col><h2>Developed By Vignesh K B</h2></Col>
+      </Row>
+      
+    </Container>
   )
+}
+
+export default React.memo(Home);
+
+
+export async function getStaticProps() {
+ 
+  const res = await axios.get(`https://api.spacexdata.com/v3/launches?limit=100&launch_year=""&launch_success=""&land_success=""`);
+  return {
+    props: {
+      launces: res.data,
+    },
+  }
 }

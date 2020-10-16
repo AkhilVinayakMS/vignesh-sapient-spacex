@@ -1,0 +1,9 @@
+.Filter {
+  background-color: white;
+}
+
+.Filter-Btns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
