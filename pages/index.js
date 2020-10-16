@@ -10,17 +10,15 @@ import Card from '../components/Card/card';
 function Home(props) {
   const { launches } = props;
   const router = useRouter();
-  let { land_success, launch_success, launch_year } = router.query;
- console.log('----',router.query)
-  const [filter, setFilter] = useState({year:launch_year? launch_year:'',launch:launch_success?launch_success:'',landing:land_success?land_success:''});
+  const { land_success, launch_success, launch_year } = router.query;
+  const [filter, setFilter] = useState({year:launch_year ? launch_year:'',launch:launch_success?launch_success:'',landing:land_success?land_success:''});
   const [flights, setFlights] = useState(launches);
  
 useEffect(() => {
-     
-    const yearFilter = launch_year ? `&launch_year=${launch_year}` : ""
-    const launchFilter = launch_success ? `&launch_success=${launch_success}` : ""
-    const landingFilter = land_success ? `&land_success=${land_success}` : ""
-    axios.get(`https://api.spacexdata.com/v3/launches?limit=100${yearFilter}${launchFilter}${landingFilter}`)
+    const yearFilter = launch_year ? launch_year : ""
+    const launchFilter = launch_success ? launch_success : ""
+    const landingFilter = land_success ? land_success : ""
+    axios.get(`https://api.spacexdata.com/v3/launches?limit=100&launch_year=${yearFilter}&launch_success=${launchFilter}&land_success=${landingFilter}`)
       .then(res => {
         setFlights(res.data)
       })
@@ -30,16 +28,16 @@ useEffect(() => {
   
   const updateFilterState = (key, value) => {
     console.log(key, value)
-    
+   
     setFilter(prevState => ({
       ...prevState,
       [key]: value
     }));
-    launch_year = (key === 'year' && value) ? value : launch_year;
-    land_success = (key === 'landing' && value) ? value : land_success;
-    launch_success = (key === 'launch' && value) ? value : launch_success;
+    const _year = (key === 'year' && value) ? value : launch_year;
+    const _land = (key === 'landing' && value) ? value : land_success;
+    const _launch = (key === 'launch' && value) ? value : launch_success;
     
-    router.push(`/?launch_success=${launch_success ? launch_success:""}&land_success=${land_success?land_success:""}&launch_year=${launch_year?launch_year:""}`, undefined, { shallow: true });
+    router.push(`/?launch_success=${_launch?_launch:''}&land_success=${_land?_land:''}&launch_year=${_year?_year:''}`, undefined, { shallow: true });
   
   }
 
