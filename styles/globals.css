@@ -15,7 +15,8 @@ a {
   box-sizing: border-box;
 }
 
-h5 {
+h5,
+h4 {
   text-align: center;
 }
 
