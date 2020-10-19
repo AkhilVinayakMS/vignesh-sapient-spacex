@@ -47,15 +47,15 @@ useEffect(() => {
       <Row xl="12">
         <Col><h2>Space X Launch Program</h2></Col>
       </Row>
-      <Row  xs="12">
-        <Col xs="12" sm="3"><Filter
+      <Row  xs="12" sm="12">
+        <Col xs="12" sm="4" md="3"><Filter
           updateFilter={(key, value) => updateFilterState(key, value)}
           yearProp={filter.year}
           launchProp={filter.launch}
           landingProp={filter.landing} /></Col>
-        <Col xs="12" sm="9">
-        <Row  xs="12">
-            {flights && flights.length > 0 && flights.map(f => <Col md="4" sm="6" xs="12" className={styles.padtop}>
+        <Col xs="12" sm="8" md="9">
+        <Row  xs="12" sm="8">
+            {flights && flights.length > 0 && flights.map(f => <Col md="3" sm="6" xs="12" className={styles.padtop}>
               <Card
                 missionName={f.mission_name}
                 flightNumber={f.flight_number}
@@ -89,7 +89,7 @@ export async function getStaticProps() {
   const res = await axios.get(`https://api.spacexdata.com/v3/launches?limit=100&launch_year=""&launch_success=""&land_success=""`);
   return {
     props: {
-      launces: res.data,
+      launches: res.data,
     },
   }
 }
